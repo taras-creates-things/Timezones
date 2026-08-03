@@ -10,7 +10,7 @@ enum DesignTokens {
     static let maximumVisibleRows = 5
     static let horizontalPadding: CGFloat = 12
     static let cellInset: CGFloat = 12
-    static let cornerRadius: CGFloat = 13
+    static let cornerRadius: CGFloat = 20
 }
 
 struct PanelSeparator: View {
