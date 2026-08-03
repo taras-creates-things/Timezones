@@ -64,6 +64,18 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(restored.zones[1].workSchedule.endMinute, 18 * 60)
     }
 
+    func testMovingZoneToIndexPersists() {
+        let (defaults, suiteName) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let model = AppModel(defaults: defaults)
+        let firstID = model.zones[0].id
+
+        model.moveZone(id: firstID, toIndex: 2)
+
+        XCTAssertEqual(model.zones[2].id, firstID)
+        XCTAssertEqual(AppModel(defaults: defaults).zones[2].id, firstID)
+    }
+
     func testPanelDestinationsStayMutuallyExclusive() {
         let (defaults, suiteName) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suiteName) }

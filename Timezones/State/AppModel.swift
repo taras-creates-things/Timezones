@@ -203,6 +203,17 @@ final class AppModel {
         zones.swapAt(currentIndex, destination)
     }
 
+    func moveZone(id: TrackedZone.ID, toIndex proposedIndex: Int) {
+        guard let sourceIndex = zones.firstIndex(where: { $0.id == id }),
+              !zones.isEmpty else { return }
+
+        let destinationIndex = min(max(proposedIndex, zones.startIndex), zones.index(before: zones.endIndex))
+        guard sourceIndex != destinationIndex else { return }
+
+        let zone = zones.remove(at: sourceIndex)
+        zones.insert(zone, at: destinationIndex)
+    }
+
     func moveZone(id: TrackedZone.ID, before destinationID: TrackedZone.ID) {
         guard id != destinationID,
               let sourceIndex = zones.firstIndex(where: { $0.id == id }),
