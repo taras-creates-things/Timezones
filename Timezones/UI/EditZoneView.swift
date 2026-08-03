@@ -55,44 +55,69 @@ struct EditZoneView: View {
 
             PanelSeparator()
 
-            Form {
-                Section("Display") {
-                    TextField("Name", text: $draft.label)
-                    LabeledContent("Timezone", value: draft.timeZoneIdentifier)
-                }
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 22) {
+                    PanelFormSection("Display") {
+                        PanelFormRow {
+                            TextField("Name", text: $draft.label)
+                        }
 
-                Section("Working hours") {
-                    Picker("Starts", selection: $draft.workSchedule.startMinute) {
-                        timeOptions
+                        PanelFormDivider()
+
+                        PanelFormRow {
+                            LabeledContent("Timezone", value: draft.timeZoneIdentifier)
+                        }
                     }
-                    Picker("Ends", selection: $draft.workSchedule.endMinute) {
-                        timeOptions
+
+                    PanelFormSection("Working hours") {
+                        PanelFormRow {
+                            Picker("Starts", selection: $draft.workSchedule.startMinute) {
+                                timeOptions
+                            }
+                        }
+
+                        PanelFormDivider()
+
+                        PanelFormRow {
+                            Picker("Ends", selection: $draft.workSchedule.endMinute) {
+                                timeOptions
+                            }
+                        }
+
+                        PanelFormDivider()
+
+                        PanelFormRow {
+                            Picker("Wrapping up", selection: $draft.workSchedule.wrappingMinutes) {
+                                ForEach(wrappingOptions, id: \.self) { minutes in
+                                    Text(minutes == 0 ? "Off" : "Last \(minutes) min").tag(minutes)
+                                }
+                            }
+                        }
                     }
-                    Picker("Wrapping up", selection: $draft.workSchedule.wrappingMinutes) {
-                        ForEach(wrappingOptions, id: \.self) { minutes in
-                            Text(minutes == 0 ? "Off" : "Last \(minutes) min").tag(minutes)
+
+                    PanelFormSection("Working days") {
+                        PanelFormRow {
+                            HStack(spacing: 5) {
+                                ForEach(weekdays, id: \.0) { weekday, shortLabel, fullLabel in
+                                    Toggle(
+                                        shortLabel,
+                                        isOn: weekdayBinding(weekday)
+                                    )
+                                    .toggleStyle(.button)
+                                    .controlSize(.small)
+                                    .help(fullLabel)
+                                }
+                            }
                         }
                     }
                 }
-
-                Section("Working days") {
-                    HStack(spacing: 5) {
-                        ForEach(weekdays, id: \.0) { weekday, shortLabel, fullLabel in
-                            Toggle(
-                                shortLabel,
-                                isOn: weekdayBinding(weekday)
-                            )
-                            .toggleStyle(.button)
-                            .controlSize(.small)
-                            .help(fullLabel)
-                        }
-                    }
-                }
+                .padding(16)
             }
-            .formStyle(.grouped)
-            .scrollContentBackground(.hidden)
         }
-        .frame(width: DesignTokens.panelWidth, height: 460)
+        .frame(
+            width: DesignTokens.panelWidth,
+            height: DesignTokens.panelHeight(for: model.zones.count)
+        )
         .background(PanelBackground(style: .content))
     }
 

@@ -46,56 +46,98 @@ struct SettingsView: View {
 
             PanelSeparator()
 
-            Form {
-                Section("Appearance") {
-                    Picker("Theme", selection: $model.appearance) {
-                        ForEach(AppearanceMode.allCases) { appearance in
-                            Text(appearance.label).tag(appearance)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 22) {
+                    PanelFormSection("Appearance") {
+                        PanelFormRow {
+                            HStack {
+                                Text("Theme")
+                                Spacer()
+                                Picker("Theme", selection: $model.appearance) {
+                                    ForEach(AppearanceMode.allCases) { appearance in
+                                        Text(appearance.label).tag(appearance)
+                                    }
+                                }
+                                .labelsHidden()
+                                .pickerStyle(.segmented)
+                                .frame(width: 195)
+                            }
+                        }
+
+                        PanelFormDivider()
+
+                        PanelFormRow {
+                            Toggle("Use 24-hour time", isOn: $model.uses24HourTime)
+                                .toggleStyle(.switch)
+                        }
+
+                        PanelFormDivider()
+
+                        PanelFormRow {
+                            Toggle("Launch at login", isOn: $launchesAtLogin)
+                                .toggleStyle(.switch)
+                                .onChange(of: launchesAtLogin) { oldValue, newValue in
+                                    updateLaunchAtLogin(from: oldValue, to: newValue)
+                                }
+                        }
+
+                        if let launchAtLoginError {
+                            PanelFormDivider()
+                            PanelFormRow {
+                                Text(launchAtLoginError)
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+                            }
                         }
                     }
-                    .pickerStyle(.segmented)
 
-                    Toggle("Use 24-hour time", isOn: $model.uses24HourTime)
-
-                    Toggle("Launch at login", isOn: $launchesAtLogin)
-                        .onChange(of: launchesAtLogin) { oldValue, newValue in
-                            updateLaunchAtLogin(from: oldValue, to: newValue)
+                    PanelFormSection("Home timezone") {
+                        PanelFormRow {
+                            Toggle("Follow Mac timezone", isOn: $model.followsSystemTimeZone)
+                                .toggleStyle(.switch)
                         }
 
-                    if let launchAtLoginError {
-                        Text(launchAtLoginError)
-                            .font(.caption)
-                            .foregroundStyle(.red)
+                        if !model.followsSystemTimeZone {
+                            PanelFormDivider()
+                            PanelFormRow {
+                                Picker("Timezone", selection: $model.manualHomeTimeZoneIdentifier) {
+                                    ForEach(homeZoneOptions) { option in
+                                        Text(option.label).tag(option.timeZoneIdentifier)
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
 
-                Section("Home timezone") {
-                    Toggle("Follow Mac timezone", isOn: $model.followsSystemTimeZone)
+                    PanelFormSection("About") {
+                        PanelFormRow {
+                            LabeledContent("Version", value: "0.1.0")
+                        }
 
-                    if !model.followsSystemTimeZone {
-                        Picker("Timezone", selection: $model.manualHomeTimeZoneIdentifier) {
-                            ForEach(homeZoneOptions) { option in
-                                Text(option.label).tag(option.timeZoneIdentifier)
+                        PanelFormDivider()
+
+                        PanelFormRow {
+                            Text("All timezone calculations happen locally on this Mac.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        PanelFormDivider()
+
+                        PanelFormRow {
+                            Button("Quit Timezones") {
+                                NSApplication.shared.terminate(nil)
                             }
                         }
                     }
                 }
-
-                Section("About") {
-                    LabeledContent("Version", value: "0.1.0")
-                    Text("All timezone calculations happen locally on this Mac.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    Button("Quit Timezones") {
-                        NSApplication.shared.terminate(nil)
-                    }
-                }
+                .padding(16)
             }
-            .formStyle(.grouped)
-            .scrollContentBackground(.hidden)
         }
-        .frame(width: DesignTokens.panelWidth, height: 450)
+        .frame(
+            width: DesignTokens.panelWidth,
+            height: DesignTokens.panelHeight(for: model.zones.count)
+        )
         .background(PanelBackground(style: .content))
     }
 

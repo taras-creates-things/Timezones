@@ -37,27 +37,36 @@ struct AddZoneView: View {
 
             PanelSeparator()
 
-            List(results) { option in
-                Button {
-                    model.addZone(option)
-                } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(option.label)
-                            .foregroundStyle(.primary)
-                        Text(option.timeZoneIdentifier)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 0) {
+                    ForEach(results) { option in
+                        Button {
+                            model.addZone(option)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(option.label)
+                                    .foregroundStyle(.primary)
+                                Text(option.timeZoneIdentifier)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, DesignTokens.horizontalPadding)
+                            .padding(.vertical, 6)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+
+                        PanelSeparator()
+                            .padding(.leading, DesignTokens.horizontalPadding)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .listRowBackground(Color.clear)
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
         }
-        .frame(width: DesignTokens.panelWidth, height: 410)
+        .frame(
+            width: DesignTokens.panelWidth,
+            height: DesignTokens.panelHeight(for: model.zones.count)
+        )
         .background(PanelBackground(style: .content))
         .task {
             isSearchFocused = true

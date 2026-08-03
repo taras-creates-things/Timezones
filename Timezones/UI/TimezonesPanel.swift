@@ -63,9 +63,7 @@ private struct MainPanel: View {
     }
 
     private var listHeight: CGFloat {
-        if model.zones.isEmpty { return 92 }
-        let visibleRows = min(model.zones.count, DesignTokens.maximumVisibleRows)
-        return CGFloat(visibleRows) * DesignTokens.rowHeight
+        DesignTokens.visibleListHeight(for: model.zones.count)
     }
 
     var body: some View {
