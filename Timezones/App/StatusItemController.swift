@@ -257,6 +257,7 @@ private final class StatusPanel: NSPanel {
 }
 
 private struct StatusPanelRoot: View {
+    @Environment(\.colorScheme) private var colorScheme
     let model: AppModel
     let onSizeChange: @MainActor (CGSize) -> Void
 
@@ -282,7 +283,12 @@ private struct StatusPanelRoot: View {
                     cornerRadius: DesignTokens.cornerRadius,
                     style: .continuous
                 )
-                .stroke(Color(nsColor: .separatorColor).opacity(0.72), lineWidth: 1)
+                .stroke(
+                    colorScheme == .dark
+                        ? Color(red: 0.302, green: 0.322, blue: 0.349).opacity(0.90)
+                        : Color(nsColor: .separatorColor).opacity(0.72),
+                    lineWidth: colorScheme == .dark ? 0.75 : 1
+                )
             }
     }
 }

@@ -32,7 +32,7 @@ struct TimelineRulerView: View {
                         .contentTransition(.numericText())
                         .animation(.easeOut(duration: 0.16), value: timelineOffset)
                 }
-                .font(.system(.caption2, design: .monospaced, weight: .medium))
+                .font(AppTypography.secondary(size: 10, relativeTo: .caption2))
                 .textCase(.uppercase)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, DesignTokens.cellInset)

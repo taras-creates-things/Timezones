@@ -37,7 +37,7 @@ struct EditZoneView: View {
                 .help("Back")
 
                 Text("Edit timezone")
-                    .font(.headline)
+                    .font(AppTypography.primary(size: 18, weight: .semibold))
 
                 Spacer()
 

@@ -55,20 +55,20 @@ struct ZoneRowView: View {
                 Spacer(minLength: 8)
                 StatusLabel(status: status)
             }
-            .font(.system(.caption2, design: .monospaced, weight: .medium))
+            .font(AppTypography.secondary(size: 10, relativeTo: .caption2))
             .foregroundStyle(.secondary)
             .textCase(.uppercase)
 
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text(zone.label)
-                    .font(.title3)
+                    .font(AppTypography.primary(size: 20))
                     .lineLimit(1)
                     .truncationMode(.tail)
 
                 Spacer(minLength: 8)
 
                 Text(time)
-                    .font(.title3)
+                    .font(AppTypography.primary(size: 20))
                     .monospacedDigit()
                     .foregroundStyle(status == .night || status == .weekend ? .secondary : .primary)
                     .contentTransition(.numericText())

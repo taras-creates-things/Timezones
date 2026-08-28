@@ -9,7 +9,7 @@ struct PanelFooterView: View {
             Button {
                 model.showSettings()
             } label: {
-                footerIcon("gearshape")
+                footerIcon("FooterSettings")
             }
             .buttonStyle(PanelCircleButtonStyle())
             .help("Settings")
@@ -25,7 +25,7 @@ struct PanelFooterView: View {
                         model.animateTimelineToNow()
                     }
                 } label: {
-                    footerIcon("scope")
+                    footerIcon("FooterTarget")
                 }
                 .buttonStyle(PanelCircleButtonStyle())
                 .help("Return to now")
@@ -34,7 +34,7 @@ struct PanelFooterView: View {
                 Button {
                     model.showAddZone()
                 } label: {
-                    footerIcon("plus")
+                    footerIcon("FooterPlus")
                 }
                 .buttonStyle(PanelCircleButtonStyle())
                 .help("Add timezone")
@@ -45,10 +45,12 @@ struct PanelFooterView: View {
         .frame(height: DesignTokens.footerHeight)
     }
 
-    private func footerIcon(_ systemName: String) -> some View {
-        Image(systemName: systemName)
-            .font(.system(size: 16, weight: .medium))
-            .frame(width: 18, height: 18)
+    private func footerIcon(_ assetName: String) -> some View {
+        Image(assetName)
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 24, height: 24)
     }
 }
 

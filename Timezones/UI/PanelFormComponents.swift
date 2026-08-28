@@ -11,8 +11,10 @@ struct PanelFormSection<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
+            Text(title.uppercased())
+                .font(AppTypography.secondary(size: 10, relativeTo: .caption2))
+                .tracking(0.4)
+                .foregroundStyle(.secondary)
                 .padding(.horizontal, 10)
 
             VStack(spacing: 0) {
@@ -35,6 +37,7 @@ struct PanelFormRow<Content: View>: View {
 
     var body: some View {
         content
+            .font(AppTypography.primary(size: 14))
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
             .padding(.horizontal, 10)
     }

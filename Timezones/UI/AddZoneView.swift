@@ -21,7 +21,7 @@ struct AddZoneView: View {
                 .help("Back")
 
                 Text("Add timezone")
-                    .font(.headline)
+                    .font(AppTypography.primary(size: 18, weight: .semibold))
 
                 Spacer()
             }
@@ -45,9 +45,14 @@ struct AddZoneView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(option.label)
+                                    .font(AppTypography.primary(size: 14, weight: .medium))
                                     .foregroundStyle(.primary)
                                 Text(option.timeZoneIdentifier)
-                                    .font(.caption)
+                                    .font(AppTypography.secondary(
+                                        size: 10,
+                                        weight: .regular,
+                                        relativeTo: .caption2
+                                    ))
                                     .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
