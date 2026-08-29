@@ -75,6 +75,7 @@ struct AddZoneView: View {
             .textFieldStyle(.plain)
             .font(AppTypography.primary(size: 14, weight: .medium))
             .foregroundStyle(SettingsColors.primary(for: colorScheme))
+            .tint(SettingsColors.editingAccent)
             .focused($isSearchFocused)
         }
         .padding(8)

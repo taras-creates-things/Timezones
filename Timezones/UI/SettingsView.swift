@@ -694,6 +694,8 @@ final class ScrollIndicatorHidingView: NSView {
 }
 
 enum SettingsColors {
+    static let editingAccent = Color(red: 0.918, green: 0.506, blue: 0.204)
+
     static func surface(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark
             ? Color(red: 0.106, green: 0.114, blue: 0.125)
