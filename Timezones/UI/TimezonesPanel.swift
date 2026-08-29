@@ -10,18 +10,18 @@ struct TimezonesPanel: View {
                let zone = model.zones.first(where: { $0.id == editingZoneID }) {
                 EditZoneView(zone: zone)
                     .id(zone.id)
-                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                    .transition(.move(edge: .trailing))
             } else if model.isAddingZone {
                 AddZoneView()
-                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                    .transition(.move(edge: .trailing))
             } else if model.isShowingSettings {
                 SettingsView()
-                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                    .transition(.move(edge: .trailing))
             } else {
-                TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                TimelineView(.periodic(from: .now, by: 60)) { timeline in
                     MainPanel(now: timeline.date)
                 }
-                .transition(.move(edge: .leading).combined(with: .opacity))
+                .transition(.move(edge: .leading))
             }
         }
         .preferredColorScheme(model.appearance.colorScheme)
@@ -42,6 +42,7 @@ struct TimezonesPanel: View {
 }
 
 private struct MainPanel: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(AppModel.self) private var model
     @State private var draggedZoneID: TrackedZone.ID?
     @State private var dragStartIndex = 0
@@ -98,7 +99,7 @@ private struct MainPanel: View {
                 .frame(height: listHeight)
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
+                    VStack(spacing: 0) {
                         ForEach(Array(model.zones.enumerated()), id: \.element.id) { index, zone in
                             ZoneRowView(
                                 zone: zone,
@@ -114,7 +115,7 @@ private struct MainPanel: View {
                             )
                             .background {
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(.regularMaterial)
+                                    .fill(draggedCardSurface)
                                     .padding(.horizontal, 4)
                                     .opacity(draggedZoneID == zone.id ? 1 : 0)
                             }
@@ -158,6 +159,12 @@ private struct MainPanel: View {
         }
         .frame(width: DesignTokens.panelWidth)
         .background(PanelBackground())
+    }
+
+    private var draggedCardSurface: Color {
+        colorScheme == .dark
+            ? Color(red: 0.185, green: 0.196, blue: 0.208)
+            : Color(red: 0.945, green: 0.953, blue: 0.963)
     }
 
     private func reorderGesture(for zone: TrackedZone) -> some Gesture {

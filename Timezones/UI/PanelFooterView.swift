@@ -7,29 +7,29 @@ struct PanelFooterView: View {
     var body: some View {
         HStack {
             Button {
-                model.showSettings()
+                if reduceMotion {
+                    model.resetToNow()
+                } else {
+                    model.animateTimelineToNow()
+                }
             } label: {
-                footerIcon("FooterSettings")
+                footerIcon("FooterTarget")
             }
             .buttonStyle(PanelCircleButtonStyle())
-            .help("Settings")
-            .accessibilityLabel("Settings")
+            .help("Return to now")
+            .accessibilityLabel("Return to now")
 
             Spacer()
 
             HStack(spacing: 6) {
                 Button {
-                    if reduceMotion {
-                        model.resetToNow()
-                    } else {
-                        model.animateTimelineToNow()
-                    }
+                    model.showSettings()
                 } label: {
-                    footerIcon("FooterTarget")
+                    footerIcon("FooterSettings")
                 }
                 .buttonStyle(PanelCircleButtonStyle())
-                .help("Return to now")
-                .accessibilityLabel("Return to now")
+                .help("Settings")
+                .accessibilityLabel("Settings")
 
                 Button {
                     model.showAddZone()

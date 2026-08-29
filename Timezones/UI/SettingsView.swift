@@ -648,7 +648,7 @@ private struct SettingsScrollOffsetObserver: ViewModifier {
     }
 }
 
-private struct ScrollIndicatorHider: NSViewRepresentable {
+struct ScrollIndicatorHider: NSViewRepresentable {
     func makeNSView(context: Context) -> ScrollIndicatorHidingView {
         ScrollIndicatorHidingView()
     }
@@ -658,7 +658,7 @@ private struct ScrollIndicatorHider: NSViewRepresentable {
     }
 }
 
-private final class ScrollIndicatorHidingView: NSView {
+final class ScrollIndicatorHidingView: NSView {
     override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         hideIndicators()
@@ -693,7 +693,7 @@ private final class ScrollIndicatorHidingView: NSView {
     }
 }
 
-private enum SettingsColors {
+enum SettingsColors {
     static func surface(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark
             ? Color(red: 0.106, green: 0.114, blue: 0.125)
