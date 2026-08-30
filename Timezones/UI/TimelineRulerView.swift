@@ -17,6 +17,7 @@ struct TimelineRulerView: View {
     let selectedDate: Date
     let homeTimeZone: TimeZone
     let timelineOffset: TimeInterval
+    let soundEffectsEnabled: Bool
     let onOffsetChange: @MainActor (TimeInterval) -> Void
     let onInteractionEnded: @MainActor () -> Void
 
@@ -41,6 +42,7 @@ struct TimelineRulerView: View {
                 RulerInteractionView(
                     timelineOffset: timelineOffset,
                     colorScheme: colorScheme,
+                    soundEffectsEnabled: soundEffectsEnabled,
                     onOffsetChange: onOffsetChange,
                     onInteractionEnded: onInteractionEnded
                 )
@@ -101,6 +103,7 @@ private struct TimelineSelectionRange: View {
 private struct RulerInteractionView: NSViewRepresentable {
     let timelineOffset: TimeInterval
     let colorScheme: ColorScheme
+    let soundEffectsEnabled: Bool
     let onOffsetChange: @MainActor (TimeInterval) -> Void
     let onInteractionEnded: @MainActor () -> Void
 
@@ -108,6 +111,7 @@ private struct RulerInteractionView: NSViewRepresentable {
         let view = TimelineRulerNSView()
         view.timelineOffset = timelineOffset
         view.apply(colorScheme: colorScheme)
+        view.soundEffectsEnabled = soundEffectsEnabled
         view.onOffsetChange = onOffsetChange
         view.onInteractionEnded = onInteractionEnded
         return view
@@ -116,6 +120,7 @@ private struct RulerInteractionView: NSViewRepresentable {
     func updateNSView(_ nsView: TimelineRulerNSView, context: Context) {
         nsView.timelineOffset = timelineOffset
         nsView.apply(colorScheme: colorScheme)
+        nsView.soundEffectsEnabled = soundEffectsEnabled
         nsView.onOffsetChange = onOffsetChange
         nsView.onInteractionEnded = onInteractionEnded
         nsView.needsDisplay = true
@@ -125,17 +130,14 @@ private struct RulerInteractionView: NSViewRepresentable {
 @MainActor
 private final class TimelineRulerNSView: NSView {
     var timelineOffset: TimeInterval = 0
+    var soundEffectsEnabled = true
     var onOffsetChange: (@MainActor (TimeInterval) -> Void)?
     var onInteractionEnded: (@MainActor () -> Void)?
 
     private var dragStartLocation: NSPoint?
     private var dragStartOffset: TimeInterval = 0
     private var lastFeedbackStep: Int?
-    private lazy var tickSound: NSSound? = {
-        let sound = NSSound(named: NSSound.Name("Tink"))
-        sound?.volume = 0.22
-        return sound
-    }()
+    private lazy var detentSound = TimelineDetentSound()
 
     override var isFlipped: Bool { true }
     override var acceptsFirstResponder: Bool { true }
@@ -264,9 +266,8 @@ private final class TimelineRulerNSView: NSView {
 
     private func updateTimeline(to proposedOffset: TimeInterval) {
         let step = feedbackStep(for: proposedOffset)
-        if let lastFeedbackStep, step != lastFeedbackStep {
-            tickSound?.stop()
-            tickSound?.play()
+        if soundEffectsEnabled, let lastFeedbackStep, step != lastFeedbackStep {
+            detentSound.play()
         }
         lastFeedbackStep = step
         onOffsetChange?(proposedOffset)
@@ -274,5 +275,94 @@ private final class TimelineRulerNSView: NSView {
 
     private func feedbackStep(for offset: TimeInterval) -> Int {
         Int((offset / AppModel.snappingInterval).rounded(.towardZero))
+    }
+}
+
+@MainActor
+private final class TimelineDetentSound {
+    private static let sampleRate = 44_100
+    private static let duration: TimeInterval = 0.018
+    private static let voiceCount = 4
+
+    private let voices: [NSSound]
+    private var nextVoice = 0
+
+    init() {
+        let soundData = Self.makeWaveData()
+        voices = (0..<Self.voiceCount).compactMap { _ in
+            guard let sound = NSSound(data: soundData) else { return nil }
+            sound.volume = 0.14
+            return sound
+        }
+    }
+
+    func play() {
+        guard !voices.isEmpty else { return }
+
+        let voice = voices[nextVoice]
+        nextVoice = (nextVoice + 1) % voices.count
+        voice.stop()
+        voice.currentTime = 0
+        voice.play()
+    }
+
+    private static func makeWaveData() -> Data {
+        let frameCount = Int(Double(sampleRate) * duration)
+        var pcmData = Data(capacity: frameCount * MemoryLayout<Int16>.size)
+        var randomState: UInt32 = 0xA11D1A1
+        var previousNoise = 0.0
+
+        for frame in 0..<frameCount {
+            let time = Double(frame) / Double(sampleRate)
+            let attack = min(time / 0.00032, 1)
+
+            randomState = 1_664_525 &* randomState &+ 1_013_904_223
+            let noise = Double(Int32(bitPattern: randomState)) / Double(Int32.max)
+            let highPassedNoise = noise - previousNoise * 0.82
+            previousNoise = noise
+
+            let snap = sin(2 * .pi * 3_250 * time) * exp(-time * 520) * 0.30
+            let mechanism = sin(2 * .pi * 1_050 * time + 0.35) * exp(-time * 310) * 0.09
+            let body = sin(2 * .pi * 260 * time) * exp(-time * 165) * 0.05
+            let texture = highPassedNoise * exp(-time * 680) * 0.025
+
+            let reboundTime = time - 0.0018
+            let rebound = reboundTime > 0
+                ? sin(2 * .pi * 2_300 * reboundTime) * exp(-reboundTime * 650) * 0.045
+                : 0
+
+            let mixed = attack * (snap + mechanism + body + texture + rebound)
+            let shaped = tanh(mixed * 1.05) * 0.56
+            let sample = Int16(
+                max(-1, min(1, shaped)) * Double(Int16.max)
+            )
+            pcmData.appendLittleEndian(sample)
+        }
+
+        var waveData = Data(capacity: 44 + pcmData.count)
+        waveData.append(contentsOf: "RIFF".utf8)
+        waveData.appendLittleEndian(UInt32(36 + pcmData.count))
+        waveData.append(contentsOf: "WAVE".utf8)
+        waveData.append(contentsOf: "fmt ".utf8)
+        waveData.appendLittleEndian(UInt32(16))
+        waveData.appendLittleEndian(UInt16(1))
+        waveData.appendLittleEndian(UInt16(1))
+        waveData.appendLittleEndian(UInt32(sampleRate))
+        waveData.appendLittleEndian(UInt32(sampleRate * MemoryLayout<Int16>.size))
+        waveData.appendLittleEndian(UInt16(MemoryLayout<Int16>.size))
+        waveData.appendLittleEndian(UInt16(16))
+        waveData.append(contentsOf: "data".utf8)
+        waveData.appendLittleEndian(UInt32(pcmData.count))
+        waveData.append(pcmData)
+        return waveData
+    }
+}
+
+private extension Data {
+    mutating func appendLittleEndian<Value: FixedWidthInteger>(_ value: Value) {
+        var littleEndianValue = value.littleEndian
+        Swift.withUnsafeBytes(of: &littleEndianValue) { bytes in
+            append(contentsOf: bytes)
+        }
     }
 }

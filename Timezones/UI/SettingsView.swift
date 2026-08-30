@@ -153,6 +153,18 @@ struct SettingsView: View {
 
                 SettingsDivider()
 
+                SettingsRow(icon: "SettingsSoundEffects", title: "Sound effects") {
+                    Toggle("Sound effects", isOn: Binding(
+                        get: { model.soundEffectsEnabled },
+                        set: { model.soundEffectsEnabled = $0 }
+                    ))
+                    .labelsHidden()
+                    .toggleStyle(SettingsSwitchToggleStyle())
+                    .accessibilityLabel("Sound effects")
+                }
+
+                SettingsDivider()
+
                 SettingsRow(icon: "SettingsLaunch", title: "Launch at login") {
                     Toggle("Launch at login", isOn: $launchesAtLogin)
                         .labelsHidden()

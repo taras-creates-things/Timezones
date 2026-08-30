@@ -76,12 +76,14 @@ struct EditZoneView: View {
             HStack(spacing: 6) {
                 Button("Discard", action: discardChanges)
                     .buttonStyle(EditZoneHeaderButtonStyle(
-                        fill: SettingsColors.card(for: colorScheme)
+                        fill: SettingsColors.card(for: colorScheme),
+                        foreground: SettingsColors.primary(for: colorScheme)
                     ))
 
                 Button("Save", action: saveChanges)
                     .buttonStyle(EditZoneHeaderButtonStyle(
-                        fill: SettingsColors.editingAccent
+                        fill: SettingsColors.editingAccent,
+                        foreground: .white
                     ))
                     .disabled(!isValid)
                     .opacity(isValid ? 1 : 0.45)
@@ -662,11 +664,12 @@ private struct EditZoneScrollOffsetObserver: ViewModifier {
 private struct EditZoneHeaderButtonStyle: ButtonStyle {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let fill: Color
+    let foreground: Color
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.primary(size: 14, weight: .medium))
-            .foregroundStyle(.white)
+            .foregroundStyle(foreground)
             .padding(.horizontal, 12)
             .frame(height: 28)
             .background {

@@ -74,6 +74,7 @@ private struct MainPanel: View {
                     selectedDate: selectedDate,
                     homeTimeZone: model.homeTimeZone,
                     timelineOffset: model.timelineOffset,
+                    soundEffectsEnabled: model.soundEffectsEnabled,
                     onOffsetChange: model.setTimelineOffset,
                     onInteractionEnded: model.finishTimelineInteraction
                 )

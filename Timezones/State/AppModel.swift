@@ -39,6 +39,10 @@ final class AppModel {
         didSet { defaults.set(uses24HourTime, forKey: Keys.uses24HourTime) }
     }
 
+    var soundEffectsEnabled: Bool {
+        didSet { defaults.set(soundEffectsEnabled, forKey: Keys.soundEffectsEnabled) }
+    }
+
     var appearance: AppearanceMode {
         didSet { defaults.set(appearance.rawValue, forKey: Keys.appearance) }
     }
@@ -77,6 +81,12 @@ final class AppModel {
             uses24HourTime = true
         } else {
             uses24HourTime = defaults.bool(forKey: Keys.uses24HourTime)
+        }
+
+        if defaults.object(forKey: Keys.soundEffectsEnabled) == nil {
+            soundEffectsEnabled = true
+        } else {
+            soundEffectsEnabled = defaults.bool(forKey: Keys.soundEffectsEnabled)
         }
 
         appearance = defaults.string(forKey: Keys.appearance)
@@ -234,6 +244,7 @@ final class AppModel {
         static let followsSystemTimeZone = "followsSystemTimeZone"
         static let manualHomeTimeZoneIdentifier = "manualHomeTimeZoneIdentifier"
         static let uses24HourTime = "uses24HourTime"
+        static let soundEffectsEnabled = "soundEffectsEnabled"
         static let appearance = "appearance"
     }
 }

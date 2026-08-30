@@ -45,6 +45,17 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(restored.zones.last?.timeZoneIdentifier, "Asia/Tokyo")
     }
 
+    func testSoundEffectsDefaultOnAndPersist() {
+        let (defaults, suiteName) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let model = AppModel(defaults: defaults)
+        XCTAssertTrue(model.soundEffectsEnabled)
+
+        model.soundEffectsEnabled = false
+        XCTAssertFalse(AppModel(defaults: defaults).soundEffectsEnabled)
+    }
+
     func testEditingAndDragReorderingPersist() {
         let (defaults, suiteName) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suiteName) }
