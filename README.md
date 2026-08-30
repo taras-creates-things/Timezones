@@ -10,13 +10,6 @@
 
 </div>
 
-<table>
-  <tr>
-    <td><img src="Timezones-updated-preview.png" alt="Timezones in dark mode" width="420"></td>
-    <td><img src="Timezones-updated-light-preview.png" alt="Timezones in light mode" width="420"></td>
-  </tr>
-</table>
-
 Timezones keeps your clients, teammates, and cities aligned around the same instant. Drag one tactile timeline and every tracked timezone moves with it—complete with daylight-saving changes, fractional offsets, working-hour context, and an optional quiet dial sound.
 
 ## Highlights
