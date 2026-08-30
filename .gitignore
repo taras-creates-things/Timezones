@@ -1,7 +1,21 @@
+# macOS
 .DS_Store
+
+# Xcode
 DerivedData/
-QABuild/
 Build/
+QABuild/
+build/
 *.xcuserstate
 xcuserdata/
-build/
+*.xcresult
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Editors
+.idea/
+.vscode/

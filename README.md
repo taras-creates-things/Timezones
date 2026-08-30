@@ -1,25 +1,85 @@
+<div align="center">
+
 # Timezones
 
-A native macOS menu-bar utility for comparing one instant across clients and cities around the world.
+### A precise, tactile world clock for the macOS menu bar.
 
-## Run
+![macOS 14+](https://img.shields.io/badge/macOS-14%2B-111111?logo=apple&logoColor=white)
+![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)
 
-1. Open `Timezones.xcodeproj` in Xcode 26 or newer.
-2. Select the **Timezones** scheme and **My Mac** destination.
-3. Run the app and click the clock icon in the menu bar.
+</div>
 
-The app targets macOS 14 and newer. It is a menu-bar-only app, so it does not appear in the Dock.
+<table>
+  <tr>
+    <td><img src="Timezones-updated-preview.png" alt="Timezones in dark mode" width="420"></td>
+    <td><img src="Timezones-updated-light-preview.png" alt="Timezones in light mode" width="420"></td>
+  </tr>
+</table>
 
-## Interaction
+Timezones keeps your clients, teammates, and cities aligned around the same instant. Drag one tactile timeline and every tracked timezone moves with it—complete with daylight-saving changes, fractional offsets, working-hour context, and an optional quiet dial sound.
 
-- Drag the ruler left or right, or scroll horizontally over it, to shift every timezone together.
-- The shaded orange range measures the distance between now and the selected time.
-- A quiet system click plays whenever the ruler crosses a 15-minute step.
-- Use Left/Right Arrow after focusing the ruler; hold Shift to move by one hour.
-- Click the center target button to animate the timeline back to now.
-- Add cities with the plus button.
-- Secondary-click a city to copy its time, edit working hours, reorder it, or remove it.
-- Drag city rows to reorder them directly.
-- Open Settings from the lower-left gear button; appearance changes preview immediately inside the popover.
+## Highlights
 
-Timezone calculations use canonical Foundation `TimeZone` identifiers and account for daylight saving transitions and fractional offsets.
+- Lives entirely in the macOS menu bar
+- Compares every saved city against one shared timeline
+- Uses canonical timezone data, including DST and fractional offsets
+- Shows working, wrapping-up, night, and weekend context at a glance
+- Supports direct row reordering and contextual city actions
+- Includes light, dark, and system appearance modes
+- Offers keyboard and trackpad-friendly timeline control
+- Stores preferences locally and makes no network requests
+
+## Requirements
+
+- macOS 14 Sonoma or newer
+- Xcode 26 or newer
+
+## Build from source
+
+```bash
+git clone https://github.com/taras-creates-things/Timezones.git
+cd Timezones
+open Timezones.xcodeproj
+```
+
+In Xcode, select the **Timezones** scheme and **My Mac**, then press **Run**. The app is menu-bar-only, so it will not appear in the Dock.
+
+> There is not yet a signed and notarized binary release. For now, build the app from source in Xcode.
+
+## Using the timeline
+
+- Drag the ruler or scroll horizontally over it to shift every city together.
+- The orange range measures the distance between now and the selected time.
+- Click the target button to animate smoothly back to the current time.
+- After focusing the ruler, use Left/Right Arrow to move by 15 minutes; hold Shift to move by one hour.
+- Use the plus button to add a city and the settings button to adjust appearance, time format, home timezone, launch behavior, and sound.
+- Drag city rows to reorder them, or secondary-click a row to copy, edit, move, or remove it.
+
+## How it is built
+
+Timezones is a native SwiftUI application with a small AppKit layer for its `NSStatusItem` and anchored `NSPanel`. Time calculations use Foundation's `TimeZone` APIs, while lightweight preferences are stored with `UserDefaults`. The project has no third-party runtime dependencies.
+
+## Privacy
+
+All timezone calculations and preferences stay on your Mac. Timezones has no account system, analytics, advertising, or network service.
+
+## Tests
+
+Run the complete test suite from Xcode, or from Terminal:
+
+```bash
+xcodebuild test \
+  -project Timezones.xcodeproj \
+  -scheme Timezones \
+  -destination 'platform=macOS'
+```
+
+## Project status
+
+Timezones is an early public preview (`0.1.0`). Feedback and focused contributions are welcome—please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+No open-source license has been selected for the application yet. The source is publicly available for viewing and evaluation, but reuse and redistribution rights are reserved.
+
+IBM Plex Mono is distributed under the SIL Open Font License included at [`Timezones/Resources/Fonts/IBM-Plex-LICENSE.txt`](Timezones/Resources/Fonts/IBM-Plex-LICENSE.txt).

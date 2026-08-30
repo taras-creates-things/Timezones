@@ -8,6 +8,10 @@ struct SettingsView: View {
     @State private var launchAtLoginError: String?
     @State private var scrollOffset: CGFloat = 0
 
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0"
+    }
+
     private var homeZoneOptions: [TimeZoneOption] {
         var seen = Set<String>()
         var options: [TimeZoneOption] = []
@@ -219,7 +223,7 @@ struct SettingsView: View {
         SettingsSection("More") {
             SettingsCard {
                 SettingsRow(icon: "SettingsAppLogo", title: "Version") {
-                    Text("0.1.0")
+                    Text(appVersion)
                         .foregroundStyle(SettingsColors.secondary(for: colorScheme))
                 }
 
