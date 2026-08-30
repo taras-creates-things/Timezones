@@ -4,6 +4,7 @@
 
 ### A precise, tactile world clock for the macOS menu bar.
 
+[![CI](https://github.com/taras-creates-things/Timezones/actions/workflows/ci.yml/badge.svg)](https://github.com/taras-creates-things/Timezones/actions/workflows/ci.yml)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-111111?logo=apple&logoColor=white)
 ![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)
 
