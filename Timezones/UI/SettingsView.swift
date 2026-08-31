@@ -2,6 +2,8 @@ import AppKit
 import SwiftUI
 
 struct SettingsView: View {
+    private static let creatorProfileURL = URL(string: "https://x.com/tar_uniqueee")!
+
     @Environment(\.colorScheme) private var colorScheme
     @Environment(AppModel.self) private var model
     @State private var launchesAtLogin = LaunchAtLoginManager.isEnabled
@@ -247,15 +249,18 @@ struct SettingsView: View {
     private var attribution: some View {
         HStack(spacing: 3) {
             Text("BUILT BY")
-            Text("TARAS DONCHENKO")
-                .underline()
+            Link(destination: Self.creatorProfileURL) {
+                Text("TARAS")
+                    .underline()
+            }
+            .buttonStyle(.plain)
+            .help("Open Taras on X")
+            .accessibilityLabel("Open Taras on X")
         }
         .font(AppTypography.secondary(size: 8, relativeTo: .caption2))
         .tracking(0.32)
         .foregroundStyle(SettingsColors.secondary(for: colorScheme))
         .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Built by Taras Donchenko")
     }
 
     private var backButton: some View {
